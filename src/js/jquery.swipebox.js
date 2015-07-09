@@ -38,21 +38,53 @@
 			winHeight = window.innerHeight ? window.innerHeight : $( window ).height(),
 			currentX = 0,
 			/* jshint multistr: true */
+
+			// old
+			// <div id="swipebox-action" class="visible-bars"
+			// 		 style="-webkit-transition: 0.5s; transition: 0.5s;">
+			// 	<a id="swipebox-close"
+			// 		 style="background-image: url(https://hail.to/img/icons.svg?v=1435664005843);"></a>
+			// 	<a id="swipebox-prev"
+			// 		 style="background-image: url(https://hail.to/img/icons.svg?v=1435664005843);"
+			// 		 class="disabled"></a>
+			// 	<a id="swipebox-next"
+			// 	   style="background-image: url(https://hail.to/img/icons.svg?v=1435664005843);"
+			// 		 class=""></a>
+			// </div>
+
+			// original
+			// html = '<div id="swipebox-overlay">\
+			// 		<div id="swipebox-container">\
+			// 			<div id="swipebox-slider"></div>\
+			// 			<div id="swipebox-top-bar">\
+			// 				<div id="swipebox-title"></div>\
+			// 			</div>\
+			// 			<div id="swipebox-bottom-bar">\
+			// 				<div id="swipebox-arrows">\
+			// 					<a id="swipebox-prev"></a>\
+			// 					<a id="swipebox-next"></a>\
+			// 				</div>\
+			// 			</div>\
+			// 			<a id="swipebox-close"></a>\
+			// 		</div>\
+			// </div>';
+
 			html = '<div id="swipebox-overlay">\
 					<div id="swipebox-container">\
 						<div id="swipebox-slider"></div>\
 						<div id="swipebox-top-bar">\
-							<div id="swipebox-title"></div>\
+              <div id="swipebox-arrows">\
+                <a id="swipebox-prev"></a>\
+                <a id="swipebox-next"></a>\
+              </div>\
+							<a id="swipebox-close"></a>\
 						</div>\
 						<div id="swipebox-bottom-bar">\
-							<div id="swipebox-arrows">\
-								<a id="swipebox-prev"></a>\
-								<a id="swipebox-next"></a>\
-							</div>\
+              <div id="swipebox-title"></div>\
 						</div>\
-						<a id="swipebox-close"></a>\
 					</div>\
 			</div>';
+
 
 		plugin.settings = {};
 
@@ -114,20 +146,28 @@
 					$elem.each( function() {
 
 						var title = null,
-							href = null;
+							href = null,
+              people = null,
+              grapher = null;
 
-						if ( $( this ).attr( 'title' ) ) {
-							title = $( this ).attr( 'title' );
-						}
-
-
+            if ($(this).attr('data-title')) {
+              title = $(this).attr('data-title');
+            }
+            if ($(this).attr('data-people')) {
+              people = $(this).attr('data-people');
+            }
+            if ($(this).attr('data-grapher')) {
+              grapher = $(this).attr('data-grapher');
+            }
 						if ( $( this ).attr( 'href' ) ) {
 							href = $( this ).attr( 'href' );
 						}
 
 						elements.push( {
 							href: href,
-							title: title
+							title: title,
+              people: people,
+              grapher: grapher
 						} );
 					} );
 
@@ -698,20 +738,47 @@
 			 * Set link title attribute as caption
 			 */
 			setTitle : function ( index ) {
-				var title = null;
+
+        $('#swipebox-top-bar').show();
+
+				var title = null,
+          people = null,
+          grapher = null;
 
 				$( '#swipebox-title' ).empty();
 
+        // italicise people.
+        // generate 3 elements and setText
+        // append elemenst to #swipebox-title
+
+
 				if ( elements[ index ] !== undefined ) {
 					title = elements[ index ].title;
+          people = elements[ index ].people;
+          grapher = elements[ index ].grapher;
 				}
 
-				if ( title ) {
-					$( '#swipebox-top-bar' ).show();
-					$( '#swipebox-title' ).append( title );
-				} else {
-					$( '#swipebox-top-bar' ).hide();
-				}
+        var dash;
+        if (title) {
+          title = $('<span>').text((people || grapher) ? title + ' - ' : title);
+        }
+        if (people) {
+          people = $('<em>').text(people);
+        }
+        if (grapher) {
+          grapher = $('<span>').text(people ? ' - ' + grapher : grapher);
+        }
+
+        $('#swipebox-title').append(title)
+          .append(people)
+          .append(grapher);
+
+				// if ( title ) {
+				// 	$( '#swipebox-top-bar' ).show();
+				// 	$( '#swipebox-title' ).append( title );
+				// } else {
+				// 	$( '#swipebox-top-bar' ).hide();
+				// }
 			},
 
 			/**
@@ -748,7 +815,7 @@
 				if ( a.search ) {
 					qs = JSON.parse( '{"' + a.search.toLowerCase().replace('?','').replace(/&/g,'","').replace(/=/g,'":"') + '"}' );
 				}
-				
+
 				// Extend with custom data
 				if ( $.isPlainObject( customData ) ) {
 					qs = $.extend( qs, customData, plugin.settings.queryStringData ); // The dev has always the final word
