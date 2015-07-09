@@ -180,6 +180,10 @@
 			}
 		};
 
+		plugin.destroy = function() {
+			ui.destroy();
+		};
+
 		ui = {
 
 			/**
