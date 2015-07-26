@@ -606,11 +606,14 @@
 
 				if ( elements.length < 2 ) {
 
-					$( '#swipebox-bottom-bar' ).hide();
+					$('#swipebox-next').hide();
+					$('#swipebox-prev').hide();
 
-					if ( undefined === elements[ 1 ] ) {
-						$( '#swipebox-top-bar' ).hide();
-					}
+					// $( '#swipebox-bottom-bar' ).hide();
+					//
+					// if ( undefined === elements[ 1 ] ) {
+					// 	$( '#swipebox-top-bar' ).hide();
+					// }
 
 				} else {
 					$( '#swipebox-prev' ).bind( action, function( event ) {
