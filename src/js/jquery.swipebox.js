@@ -150,8 +150,8 @@
               people = null,
               grapher = null;
 
-            if ($(this).attr('data-title')) {
-              title = $(this).attr('data-title');
+            if ($(this).attr('data-caption')) {
+              title = $(this).attr('data-caption');
             }
             if ($(this).attr('data-people')) {
               people = $(this).attr('data-people');
